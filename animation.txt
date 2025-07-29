@@ -1,0 +1,22 @@
+You are getting an error with AOS animation because you are including the AOS script and initialization outside of the Vue component system. In Vue (especially Vue 3 + Vite), you should import and initialize AOS inside your component's script, not with <script src="..."> in the SFC file.
+
+How to fix:
+
+1.Install AOS via npm:
+
+command ---> npm install aos
+
+2.Import and initialize AOS in your component: Replace your current script section with the following:
+
+<script setup>
+import { onMounted, ref } from 'vue'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
+onMounted(() => {
+  AOS.init({
+    duration: 1000,
+    once: true
+  })
+})
+</script>
