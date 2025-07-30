@@ -1,0 +1,200 @@
+
+<template>
+  <v-app>
+    <v-main>
+      <v-container>
+        <!-- Section 1 and 2 -->
+        <div class="section-row">
+          <div
+            ref="section0"
+            :class="['scroll-section half left-to-right', { visible: visibleSections[0] }]"
+          >
+            Welcome to Section 1
+          </div>
+          <div
+            ref="section1"
+            :class="['scroll-section half right-to-left', { visible: visibleSections[1] }]"
+          >
+            Here's Section 2
+          </div>
+        </div>
+
+        <!-- Section 3: 2x2 -->
+        <div class="section-row">
+          <div
+            ref="section2"
+            :class="['scroll-section half left-to-right', { visible: visibleSections[2] }]"
+          >
+            Section 3A
+          </div>
+          <div
+            ref="section3"
+            :class="['scroll-section half right-to-left', { visible: visibleSections[3] }]"
+          >
+            Section 3B
+          </div>
+        </div>
+        <div class="section-row">
+          <div
+            ref="section4"
+            :class="['scroll-section half left-to-right', { visible: visibleSections[4] }]"
+          >
+            Section 3C
+          </div>
+          <div
+            ref="section5"
+            :class="['scroll-section half right-to-left', { visible: visibleSections[5] }]"
+          >
+            Section 3D
+          </div>
+        </div>
+
+        <!-- Section 7 -->
+        <div
+          ref="section6"
+          :class="['scroll-section', { visible: visibleSections[6] }]"
+        >
+          Section 7 Content
+        </div>
+
+        <!-- Section 8 split into 3 parts -->
+        <div class="section8-wrapper">
+          <!-- Top section (full width) -->
+          <div
+            ref="section7_top"
+            :class="['scroll-section full top-to-bottom', { visible: visibleSections[7] }]"
+          >
+            Section 8 - Top
+          </div>
+
+          <!-- Bottom row with left and right -->
+          <div class="section-row">
+            <div
+              ref="section7_left"
+              :class="['scroll-section half left-to-right', { visible: visibleSections[8] }]"
+            >
+              Section 8 - Left
+            </div>
+            <div
+              ref="section7_right"
+              :class="['scroll-section half right-to-left', { visible: visibleSections[9] }]"
+            >
+              Section 8 - Right
+            </div>
+          </div>
+        </div>
+
+        <!-- Sections 9 & 10 -->
+        <div
+          ref="section8"
+          :class="['scroll-section', { visible: visibleSections[10] }]"
+        >
+          Section 9 Content
+        </div>
+        <div
+          ref="section9"
+          :class="['scroll-section', { visible: visibleSections[11] }]"
+        >
+          Final Section 10
+        </div>
+      </v-container>
+    </v-main>
+  </v-app>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      visibleSections: Array(12).fill(false), // Adjusted for new structure
+    };
+  },
+  mounted() {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.dataset.index);
+            this.$set(this.visibleSections, index, true);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    // Register refs manually since we’re not using v-for
+    const sectionRefs = [
+      'section0',
+      'section1',
+      'section2',
+      'section3',
+      'section4',
+      'section5',
+      'section6',
+      'section7_top',
+      'section7_left',
+      'section7_right',
+      'section8',
+      'section9'
+    ];
+
+    sectionRefs.forEach((refName, i) => {
+      const section = this.$refs[refName];
+      section.dataset.index = i;
+      observer.observe(section);
+    });
+  },
+};
+</script>
+
+<style scoped>
+.section-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.section8-wrapper {
+  margin-bottom: 20px;
+}
+
+.scroll-section {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  background: #dcdcdc;
+  margin-bottom: 20px;
+  transform: translateY(40px);
+}
+
+/* Size helpers */
+.scroll-section.half {
+  flex: 1 1 50%;
+  margin-bottom: 0;
+}
+.scroll-section.full {
+  width: 100%;
+}
+
+/* Direction animations */
+.left-to-right {
+  transform: translateX(-100px);
+}
+.right-to-left {
+  transform: translateX(100px);
+}
+.top-to-bottom {
+  transform: translateY(-100px);
+}
+
+/* Active */
+.scroll-section.visible {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+  background: #bdbdbd;
+}
+</style>

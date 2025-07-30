@@ -1,0 +1,153 @@
+
+
+<template>
+  <v-app>
+    <v-main>
+      <v-container>
+        <!-- First 2 sections in one row -->
+        <div class="section-row">
+          <div
+            ref="section0"
+            :class="['scroll-section half left-to-right', { visible: visibleSections[0] }]"
+          >
+            Welcome to Section 1
+          </div>
+          <div
+            ref="section1"
+            :class="['scroll-section half right-to-left', { visible: visibleSections[1] }]"
+          >
+            Here's Section 2
+          </div>
+        </div>
+
+        <!-- Section 3: 2x2 Grid (Sections 3–6) -->
+        <div class="section-row">
+          <div
+            ref="section2"
+            :class="['scroll-section half left-to-right', { visible: visibleSections[2] }]"
+          >
+            Section 3A
+          </div>
+          <div
+            ref="section3"
+            :class="['scroll-section half right-to-left', { visible: visibleSections[3] }]"
+          >
+            Section 3B
+          </div>
+        </div>
+        <div class="section-row">
+          <div
+            ref="section4"
+            :class="['scroll-section half left-to-right', { visible: visibleSections[4] }]"
+          >
+            Section 3C
+          </div>
+          <div
+            ref="section5"
+            :class="['scroll-section half right-to-left', { visible: visibleSections[5] }]"
+          >
+            Section 3D
+          </div>
+        </div>
+
+        <!-- Sections 7–10 stacked vertically -->
+        <div
+          ref="section6"
+          :class="['scroll-section', { visible: visibleSections[6] }]"
+        >
+          Section 7 Content
+        </div>
+        <div
+          ref="section7"
+          :class="['scroll-section', { visible: visibleSections[7] }]"
+        >
+          Section 8 Content
+        </div>
+        <div
+          ref="section8"
+          :class="['scroll-section', { visible: visibleSections[8] }]"
+        >
+          Section 9 Content
+        </div>
+        <div
+          ref="section9"
+          :class="['scroll-section', { visible: visibleSections[9] }]"
+        >
+          Final Section 10
+        </div>
+      </v-container>
+    </v-main>
+  </v-app>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      visibleSections: Array(10).fill(false),
+    };
+  },
+  mounted() {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.dataset.index);
+            this.$set(this.visibleSections, index, true);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    for (let i = 0; i < 10; i++) {
+      const section = this.$refs[`section${i}`];
+      section.dataset.index = i;
+      observer.observe(section);
+    }
+  },
+};
+</script>
+
+<style scoped>
+.section-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.scroll-section {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  background: #dcdcdc;
+  margin-bottom: 20px;
+  transform: translateY(40px);
+}
+
+/* Half width for grid layout */
+.scroll-section.half {
+  flex: 1 1 50%;
+  margin-bottom: 0;
+}
+
+/* Directional transforms */
+.left-to-right {
+  transform: translateX(-100px);
+}
+
+.right-to-left {
+  transform: translateX(100px);
+}
+
+/* Show on scroll */
+.scroll-section.visible {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+  background: #bdbdbd;
+}
+</style>
